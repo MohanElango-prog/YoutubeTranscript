@@ -1,11 +1,10 @@
 import asyncio
 import logging
 import os
-
 from summariser import SummaryGenerator
 from transcript import TranscriptExtractor
+from classifier import CategoryExtractor
 
-# Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 async def main():
@@ -22,14 +21,21 @@ async def main():
             logging.error("Invalid YouTube URL")
             return
 
+        # Transcript extraction
         transcript_extractor = TranscriptExtractor()
         csv_file = await transcript_extractor.get_transcript(youtube_url)
 
         if csv_file:
             logging.info(f"Transcript saved to CSV file: {csv_file}")
 
+            # Transcript classification
+            transcript_classifier = CategoryExtractor(my_secret)
+            category = transcript_classifier.classify_from_csv(csv_file)
+            logging.info(f"Transcript classified as: {category}")
+
+            # Summary generation
             summary_generator = SummaryGenerator(my_secret)
-            summary_file = summary_generator.create_summary_from_csv(csv_file)
+            summary_file = summary_generator.create_summary_from_csv(csv_file, category) # Assuming create_summary_from_csv is modified
 
             if summary_file:
                 logging.info(f"Summary saved to file: {summary_file}")
@@ -38,7 +44,7 @@ async def main():
         else:
             logging.error("Failed to extract transcript.")
     except Exception as e:
-      logging.error(f"An error occurred: {str(e)}")
-      
+        logging.error(f"An error occurred: {str(e)}")
+
 if __name__ == "__main__":
     asyncio.run(main())
