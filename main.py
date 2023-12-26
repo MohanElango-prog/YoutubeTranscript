@@ -1,35 +1,44 @@
-from transcript import TranscriptExtractor
-from summariser import SummaryGenerator
+import asyncio
+import logging
 import os
 
+from summariser import SummaryGenerator
+from transcript import TranscriptExtractor
 
-def main():
-  my_secret = os.environ['YOUR_OPENAI_KEY']
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-  # Prompt the user for the YouTube URL
-  youtube_url = input("Please enter the YouTube video URL: ")
-  openai_api_key = my_secret
+async def main():
+    try:
+        my_secret = os.environ.get('YOUR_OPENAI_KEY')
+        if not my_secret:
+            logging.error("OpenAI key not found in environment variables.")
+            return
 
-  # Your OpenAI API key
+        youtube_url = input("Please enter the YouTube video URL: ")
 
-  # Instance of the TranscriptExtractor class from transcript.py
-  transcript_extractor = TranscriptExtractor()
-  csv_file = transcript_extractor.get_transcript(youtube_url)
+        # Validate YouTube URL
+        if "youtube.com" not in youtube_url and "youtu.be" not in youtube_url:
+            logging.error("Invalid YouTube URL")
+            return
 
-  if csv_file:
-    print(f"Transcript saved to CSV file: {csv_file}")
+        transcript_extractor = TranscriptExtractor()
+        csv_file = await transcript_extractor.get_transcript(youtube_url)
 
-    # Instance of the SummaryGenerator class from summariser.py
-    summary_generator = SummaryGenerator(openai_api_key)
-    summary_file = summary_generator.create_summary_from_csv(csv_file)
+        if csv_file:
+            logging.info(f"Transcript saved to CSV file: {csv_file}")
 
-    if summary_file:
-      print(f"Summary saved to file: {summary_file}")
-    else:
-      print("Failed to generate summary.")
-  else:
-    print("Failed to extract transcript.")
+            summary_generator = SummaryGenerator(my_secret)
+            summary_file = summary_generator.create_summary_from_csv(csv_file)
 
-
+            if summary_file:
+                logging.info(f"Summary saved to file: {summary_file}")
+            else:
+                logging.error("Failed to generate summary.")
+        else:
+            logging.error("Failed to extract transcript.")
+    except Exception as e:
+      logging.error(f"An error occurred: {str(e)}")
+      
 if __name__ == "__main__":
-  main()
+    asyncio.run(main())

@@ -1,0 +1,4 @@
+htttpx 
+youtube_transcript_api
+anyio
+httpcore

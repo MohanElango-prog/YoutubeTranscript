@@ -1,7 +1,5 @@
 import csv
-
 import openai
-
 
 class SummaryGenerator:
     def __init__(self, openai_api_key):
@@ -20,14 +18,14 @@ class SummaryGenerator:
         openai.api_key = self.openai_api_key
 
         # Determine the model based on the length of the text
-        model = "gpt-3.5-turbo-16k"
+        model = "gpt-3.5-turbo" if len(text.split()) <= 4096 else "gpt-3.5-turbo-16k"
 
         response = openai.ChatCompletion.create(
             model=model,
             messages=[
                 {
                     "role": "system",
-                    "content": "Use your maximum number of token to generate the results. Generate a concise and insightful summary of the transcript that's given to you. Focus on capturing the key messages, anecdotes and everything that's useful to the reader. You can make use of emojis as pointers if required. Make your responses actionable and structured to make it useful for the reader"
+                    "content": "Summarise the following subtitles into engaging form. You can use emoji as bulletins whenever necessary. Keep the summary short and concise."
                 },
                 {
                     "role": "user",
@@ -35,7 +33,7 @@ class SummaryGenerator:
                 }
             ],
             temperature=1,
-            max_tokens=4500,
+            max_tokens=500,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
