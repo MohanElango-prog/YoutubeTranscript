@@ -29,7 +29,7 @@ class CategoryExtractor:
         {
             'name': 'extract_Category',
             'description':
-            'Classify the above text to any of the following category. The categories are educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.ducational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.',
+            'Classify the above text to any of the following category. The categories are educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.',
             'parameters': {
                 'type': 'object',
                 'properties': {

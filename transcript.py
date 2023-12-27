@@ -2,6 +2,7 @@ import re
 import csv
 import logging
 import asyncio
+import math
 from youtube_transcript_api import YouTubeTranscriptApi
 
 class TranscriptExtractor:
@@ -37,13 +38,20 @@ class TranscriptExtractor:
                     if line['start'] < chunk_start + chunk_duration:
                         chunk_text += line['text'] + " "
                     else:
-                        writer.writerow([chunk_start, chunk_text.strip()])
+                        start_min = math.floor(chunk_start / 60)
+                        end_min = start_min + 2  # since chunk duration is 2 minutes
+                        time_range = f"{start_min:02d}:00 - {end_min:02d}:00 mins"
+                        writer.writerow([time_range, chunk_text.strip()])
+
                         chunk_start = line['start']
                         chunk_text = line['text'] + " "
 
                 # Write the last chunk if there's remaining text
                 if chunk_text:
-                    writer.writerow([chunk_start, chunk_text.strip()])
+                    start_min = math.floor(chunk_start / 60)
+                    end_min = start_min + 2
+                    time_range = f"{start_min:02d}:00 - {end_min:02d}:00 mins"
+                    writer.writerow([time_range, chunk_text.strip()])
 
             logging.info(f"Transcript data written to {csv_file_name}")
             return csv_file_name
