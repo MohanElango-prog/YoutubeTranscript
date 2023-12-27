@@ -22,167 +22,160 @@ class SummaryGenerator:
         # Determine the model based on the length of the text
         model = "gpt-3.5-turbo" if len(text.split()) <= 4096 else "gpt-3.5-turbo-16k"
         custom_functions = [
-            # Educational Tutorials
-            {
-                'name': 'extract_educational_summary',
-                'description': 'Extract a summary of an educational tutorial from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the tutorial'},
-                        'Key Points': {'type': 'string', 'description': 'Main teaching points of the tutorial'},
-                        'Duration': {'type': 'string', 'description': 'Length of the tutorial'}
-                    }
-                }
-            },
-            # Documentary
-            {
-                'name': 'extract_documentary_summary',
-                'description': 'Extract a summary of a documentary from the transcript',
-                'parameters': {
-                    # Your existing definition
-                }
-            },
-            # Academic Webinar
-            {
-                'name': 'extract_academic_webinar_summary',
-                'description': 'Extract a summary of an academic webinar from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the webinar'},
-                        'Presenter': {'type': 'string', 'description': 'Name of the presenter'},
-                        'Main Topics': {'type': 'string', 'description': 'Key topics discussed in the webinar'}
-                    }
-                }
-            },
-            # Podcast Interviews
-            {
-                'name': 'extract_podcast_summary',
-                'description': 'Extract a summary of a podcast interview from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the podcast episode'},
-                        'Host': {'type': 'string', 'description': 'Name of the host'},
-                        'Guest': {'type': 'string', 'description': 'Name of the guest'},
-                        'Key Points': {'type': 'string', 'description': 'Main points or topics covered'}
-                    }
-                }
-            },
-            # Travel Vlog
-            {
-                'name': 'extract_travel_vlog_summary',
-                'description': 'Extract a summary of a travel vlog from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the vlog'},
-                        'Destinations': {'type': 'string', 'description': 'Main destinations covered in the vlog'},
-                        'Highlights': {'type': 'string', 'description': 'Key highlights or experiences'}
-                    }
-                }
-            },
-
-            # TV Series
-            {
-                'name': 'extract_tv_series_summary',
-                'description': 'Extract a summary of a TV series episode from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the episode'},
-                        'Season': {'type': 'string', 'description': 'Season number'},
-                        'Episode': {'type': 'string', 'description': 'Episode number'},
-                        'Plot': {'type': 'string', 'description': 'Brief plot of the episode'}
-                    }
-                }
-            },
-
-            # Gaming
-            {
-                'name': 'extract_gaming_summary',
-                'description': 'Get the gaming summary from the text',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'title of the video.'},
-                        'Game': {'type': 'string', 'description': 'Name of the game they are streaming'},
-                        'Highlights': {'type': 'string', 'description': 'Main highlights or events during the stream'}
-                    }
-                }
-            },
-
-            # Fitness Routine
-            {
-                'name': 'extract_fitness_routine_summary',
-                'description': 'Extract a summary of a fitness routine from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the fitness video'},
-                        'Routine Type': {'type': 'string', 'description': 'Type of fitness routine'},
-                        'Duration': {'type': 'string', 'description': 'Duration of the routine'}
-                    }
-                }
-            },
-
-            # Cooking
-            {
-                'name': 'extract_cooking_summary',
-                'description': 'Extract a summary of a cooking video from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Recipe Name': {'type': 'string', 'description': 'Name of the recipe'},
-                        'Ingredients': {'type': 'string', 'description': 'List of main ingredients'},
-                        'Cooking Time': {'type': 'string', 'description': 'Total cooking time'}
-                    }
-                }
-            },
-
-            # Science Talks
-            {
-                'name': 'extract_science_talk_summary',
-                'description': 'Extract a summary of a science talk from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Title': {'type': 'string', 'description': 'Title of the talk'},
-                        'Speaker': {'type': 'string', 'description': 'Name of the speaker'},
-                        'Main Topics': {'type': 'string', 'description': 'Key topics discussed'}
-                    }
-                }
-            },
-
-            # Product Reviews
-            {
-                'name': 'extract_product_review_summary',
-                'description': 'Extract a summary of a product review from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Product Name': {'type': 'string', 'description': 'Name of the product'},
-                        'Features': {'type': 'string', 'description': 'Key features of the product'},
-                        'Reviewer Opinion': {'type': 'string', 'description': 'Overall opinion of the reviewer'}
-                    }
-                }
-            },
-
-            # Movie Reviews
-            {
-                'name': 'extract_movie_review_summary',
-                'description': 'Extract a summary of a movie review from the transcript',
-                'parameters': {
-                    'type': 'object',
-                    'properties': {
-                        'Movie Title': {'type': 'string', 'description': 'Title of the movie'},
-                        'Plot': {'type': 'string', 'description': 'Brief plot of the movie'},
-                        'Reviewer Rating': {'type': 'integer', 'description': 'Rating given by the reviewer'}
-                    }
-                }
-            }
-
+          {
+              'name': 'extract_educational_summary',
+              'description': 'Generate a structured summary with emoji bullet points for educational tutorials',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Main Topics': {'type': 'string', 'description': '📚 Main topics covered'},
+                      'Key Points': {'type': 'string', 'description': '🔑 Key teaching points or methods explained'},
+                  }
+              }
+          },
+          # Documentary
+          {
+              'name': 'extract_documentary_summary',
+              'description': 'Create a structured summary with emoji bullet points for documentaries',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Theme': {'type': 'string', 'description': '🌍 Main theme of the documentary'},
+                      'Key Facts': {'type': 'string', 'description': '🔎 Key historical or factual points'},
+                  }
+              }
+          },
+          # Academic Webinar
+          {
+              'name': 'extract_academic_webinar_summary',
+              'description': 'Summarize academic webinars with structured format and emoji bullets',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Topics': {'type': 'string', 'description': '📖 Main topics discussed'},
+                      'Insights': {'type': 'string', 'description': '💡 Key insights or findings'},
+                  }
+              }
+          },
+          # Podcast Interviews
+          {
+              'name': 'extract_podcast_summary',
+              'description': 'Summarize podcast interviews using emojis and a structured layout',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Discussion Points': {'type': 'string', 'description': '🎙️ Key discussion points'},
+                      'Quotes': {'type': 'string', 'description': '💬 Notable quotes from the host and guest'},
+                  }
+              }
+          },
+          # Travel Vlog
+          {
+              'name': 'extract_travel_vlog_summary',
+              'description': 'Create a travel vlog summary with a structured, emoji-enhanced format',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Destinations': {'type': 'string', 'description': '🌏 Main destinations visited'},
+                      'Experiences': {'type': 'string', 'description': '🌟 Unique experiences or activities'},
+                  }
+              }
+          },
+          # TV Series
+          {
+              'name': 'extract_tv_series_summary',
+              'description': 'Use structured summaries with emojis for TV series episodes',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Plot': {'type': 'string', 'description': '📺 Plot of the episode'},
+                      'Developments': {'type': 'string', 'description': '🎭 Key characters and developments'},
+                  }
+              }
+          },
+          # Gaming
+          {
+              'name': 'extract_gaming_summary',
+              'description': 'Generate a gaming session summary with structured bullet points using emojis',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Events': {'type': 'string', 'description': '🎮 Main events of the gaming session'},
+                      'Strategies': {'type': 'string', 'description': '🕹️ Key strategies used'},
+                  }
+              }
+          },
+          # Fitness Routine
+          {
+              'name': 'extract_fitness_routine_summary',
+              'description': 'Summarize fitness videos using structured format and emojis',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Exercises': {'type': 'string', 'description': '💪 Key exercises in the routine'},
+                      'Tips': {'type': 'string', 'description': '🏋️ Specific tips or techniques mentioned'},
+                  }
+              }
+          },
+          # Cooking
+          {
+              'name': 'extract_cooking_summary',
+              'description': 'Create a cooking video summary with structured, emoji-enhanced format',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Recipe': {'type': 'string', 'description': '🍳 Name of the recipe and main ingredients'},
+                      'Cooking Steps': {'type': 'string', 'description': '👩‍🍳 Steps involved in cooking'},
+                  }
+              }
+          },
+          # Science Talks
+          {
+              'name': 'extract_science_talk_summary',
+              'description': 'Summarize science talks using a structured format and emojis',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Concepts': {'type': 'string', 'description': '🔬 Main scientific concepts discussed'},
+                      'Findings': {'type': 'string', 'description': '🧪 Key findings or theories'},
+                  }
+              }
+          },
+          # Product Reviews
+          {
+              'name': 'extract_product_review_summary',
+              'description': 'Use emojis and structured format for product review summaries',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Features': {'type': 'string', 'description': '🛍️ Key features of the product'},
+                      'Opinion': {'type': 'string', 'description': '👍 Reviewer\'s overall opinion'},
+                  }
+              }
+          },
+          # Movie Reviews
+          {
+              'name': 'extract_movie_review_summary',
+              'description': 'Summarize movie reviews with structured emoji bullets',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Plot': {'type': 'string', 'description': '🎥 Brief plot of the movie'},
+                      'Rating': {'type': 'string', 'description': '⭐ Reviewer\'s rating of the movie'},
+                  }
+              }
+          },
+          # Default/General Summary
+          {
+              'name': 'default_summary_function',
+              'description': 'Generate a general summary with a structured, emoji-enhanced format',
+              'parameters': {
+                  'type': 'object',
+                  'properties': {
+                      'Summary': {'type': 'string', 'description': '📝 General summary of the content'}
+                  }
+              }
+          }
         ]
         category_function_map = {
           'educational tutorials': 'extract_educational_summary',

@@ -9,7 +9,7 @@ class CategoryExtractor:
     self.openai_api_key = openai_api_key
 
   def read_subtitles_from_csv(self, csv_file_path):
-    text = ""
+    text = "<start of transcript>"
     max_characters = 4000  # Approximate character count for 500 tokens
     with open(csv_file_path, 'r', encoding='utf-8') as file:
       reader = csv.reader(file)
@@ -18,6 +18,7 @@ class CategoryExtractor:
         text += row[1] + " "
         if len(text) >= max_characters:
           break
+      text += "<end of transcript>"
     return text
 
   def classify(self, text):
@@ -28,7 +29,7 @@ class CategoryExtractor:
         {
             'name': 'extract_Category',
             'description':
-            'Extract the one of the following categories from the text, educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.ducational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.',
+            'Classify the above text to any of the following category. The categories are educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.ducational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.',
             'parameters': {
                 'type': 'object',
                 'properties': {
