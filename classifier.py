@@ -1,5 +1,6 @@
 import csv
 import openai
+import json
 
 
 class CategoryExtractor:
@@ -22,24 +23,41 @@ class CategoryExtractor:
   def classify(self, text):
     openai.api_key = self.openai_api_key
     model = "gpt-3.5-turbo"
-    response = openai.ChatCompletion.create(
-        model=model,
-        messages=[{
-            "role":
-            "system",
-            "content":
-            "Read the following text and classify it into one of the following in json categories: educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.ducational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews."
-        }, {
-            "role": "user",
-            "content": text
-        }],
-        temperature=1,
-        max_tokens=500,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0)
-    print(response['choices'][0]['message']['content'], "asjhdvajs")
-    return response['choices'][0]['message']['content']
+
+    custom_functions = [
+        {
+            'name': 'extract_Category',
+            'description':
+            'Extract the one of the following categories from the text, educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.ducational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.',
+            'parameters': {
+                'type': 'object',
+                'properties': {
+                    'Category': {
+                        'type': 'string',
+                        'description': 'Category of the Text'
+                    },
+                }
+            }
+        },
+    ]
+
+    description = [text]
+    for i in description:
+      response = openai.ChatCompletion.create(model='gpt-3.5-turbo',
+                                              messages=[{
+                                                  'role': 'user',
+                                                  'content': i
+                                              }],
+                                              functions=custom_functions,
+                                              function_call='auto')
+
+      # Loading the response as a JSON object
+      # print(response['choices'][0]['message']['function_call']['arguments'])
+      json_response = json.loads(
+          response['choices'][0]['message']['function_call']['arguments'])
+      # print(json_response)
+      category_value = json_response.get('Category', 'general')
+      return category_value
 
   def classify_from_csv(self, csv_file_path):
     text = self.read_subtitles_from_csv(csv_file_path)

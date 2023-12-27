@@ -215,9 +215,7 @@ class SummaryGenerator:
           )
 
           # Loading the response as a JSON object
-          print(response['choices'][0]['message'])
           json_response = json.loads(response['choices'][0]['message']['function_call']['arguments'])
-          print(json_response)
           return json_response
 
     def save_summary_to_file(self, summary, file_path):
