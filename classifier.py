@@ -24,41 +24,26 @@ class CategoryExtractor:
   def classify(self, text):
     openai.api_key = self.openai_api_key
     model = "gpt-3.5-turbo"
-
-    custom_functions = [
-        {
-            'name': 'extract_Category',
-            'description':
-            'Classify the above text to any of the following category. The categories are educational tutorials, documentary, academic webinar, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science talks, product reviews, movie reviews.',
-            'parameters': {
-                'type': 'object',
-                'properties': {
-                    'Category': {
-                        'type': 'string',
-                        'description': 'Category of the Text'
-                    },
-                }
-            }
-        },
-    ]
-
-    description = [text]
-    for i in description:
-      response = openai.ChatCompletion.create(model='gpt-3.5-turbo',
-                                              messages=[{
-                                                  'role': 'user',
-                                                  'content': i
-                                              }],
-                                              functions=custom_functions,
-                                              function_call='auto')
-
-      # Loading the response as a JSON object
-      # print(response['choices'][0]['message']['function_call']['arguments'])
-      json_response = json.loads(
-          response['choices'][0]['message']['function_call']['arguments'])
-      # print(json_response)
-      category_value = json_response.get('Category', 'general')
-      return category_value
+    response = openai.ChatCompletion.create(
+        model=model,
+        messages=[{
+            "role":
+            "system",
+            "content":
+            "Classify the above text to any of the following category. The categories are educational tutorials, documentary, podcast interviews, travel vlog, tv series, gaming, fitness routine, cooking, science, product reviews, movie reviews. If none of the category matches make it as general."
+        }, {
+            "role": "user",
+            "content": text
+        }, {
+            "role": "assistant",
+            "content": "Product reviews"
+        }],
+        temperature=1,
+        max_tokens=500,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0)
+    return response['choices'][0]['message']['content']
 
   def classify_from_csv(self, csv_file_path):
     text = self.read_subtitles_from_csv(csv_file_path)
